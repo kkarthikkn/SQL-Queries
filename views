@@ -1,0 +1,4 @@
+-- views
+create view rest_aurant as
+select location
+from restaurants;
