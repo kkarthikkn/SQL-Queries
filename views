@@ -2,3 +2,5 @@
 create view rest_aurant as
 select location
 from restaurants;
+
+select * from rest_aurant;
