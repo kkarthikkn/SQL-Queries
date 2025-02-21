@@ -1,0 +1,17 @@
+show databases;
+
+drop table if exists da_project;
+create table da_project(
+	s_no int,
+     f_name varchar(20),
+     l_name varchar(20)
+     );
+
+select* from da_project;
+
+desc da_project;
+alter table da_project add email varchar(20);
+alter table da_project drop column f_name;
+
+alter table da_project
+add constraint pk_sno primary key(s_no);
