@@ -1,0 +1,113 @@
+-- PARTITION : Improved Query Performance, Faster Data Loading and Deletion
+-- types:- 1.RANGE()  2.LIST()   3.HASH()
+-- NOTE: partition col should be primary key
+
+-- Range
+
+create table order_detail(
+	order_id int auto_increment,
+     order_date date,
+     customer_name varchar(50),
+     amount decimal(10,2),
+     primary key(order_id,order_date)
+     )
+     
+     partition by range(year(order_date))
+     ( 	partition p_bfr_2020 values less than(2021),
+		partition p_2021 values less than(2022),
+          partition p_2022 values less than(2023),
+          partition p_2023 values less than(2024),
+          partition p_future values less than maxvalue
+     );
+     
+insert into order_detail(order_date,customer_name,amount) values
+('2019-05-10', 'Alice', 100.00),
+('2020-01-15', 'Bob', 200.50),
+('2020-12-01', 'Charlie', 300.00),
+('2021-07-20', 'Diana', 150.75),
+('2022-03-02', 'Edward', 500.00),
+('2025-06-18', 'FutureMan', 9999.99);
+
+select * from order_detail where order_date='2020-12-01';
+
+explain format=json select * from order_detail where order_date='2020-12-01';
+
+-- if you don't know how partiton is divided/made, to get partition details
+-- 1st way
+show create table order_detail;
+
+-- 2nd way
+select
+partition_name, 
+partition_method,
+partition_expression,
+subpartition_method,
+subpartition_expression
+from information_schema.PARTITIONS
+where table_schema='customer' and table_name='order_detail';
+
+-- explaination
+-- partition_name: 			name of the given partition
+-- partition_method: 		which type of partition performed
+-- partition_expression: 	on which column partition performed
+-- subpartition_method,subpartition_expression: 		similar to the above one
+-- table_schema:		name of the database
+
+
+-- ---------------------------------------
+-- LIST
+create table emp(
+   emp_id int auto_increment,
+   first_name varchar(50),
+   last_name varchar(50),
+   department varchar(50),
+   primary key(emp_id,department)
+   )
+   
+   -- list partiton usually takes the value as INT, so we need to convert into string with keyword 'columns'
+   
+   partition by list columns(department)
+   (partition p_hr values in ('HR'),
+    partition p_sale values in ('Sales'),
+    partition p_engineering values in ('Engineering','DevOps'),
+    partition p_other values in ('Finance','Marketing','Operations')
+   );
+
+INSERT INTO emp (first_name, last_name, department) VALUES
+('Alice', 'Smith', 'Sales'),
+('Bob', 'Johnson', 'HR'),
+('Charlie', 'Lee', 'Engineering'),
+('Diana', 'Lopez', 'DevOps'),
+('Eve', 'Turner', 'Marketing');
+
+select * from emp where department='Devops'; 
+select * from emp where department in ('Devops','Marketing') ;
+explain select * from emp where department='Devops';
+
+
+-- ---------------------------------------
+-- HASH : to perform partition with unique col(id,ph_no,email....)
+create table sensor_data(
+	sensor_id int primary key,
+     reading_time datetime,
+     reading_value decimal(10,2)
+    )
+    
+    partition by hash(sensor_id)
+    partitions 2 ;  -- divides into 2 partion by performing mod(%) operation & separates into odd & even
+				-- scans only 50% of the table which gives better performance, it won't scan full table
+
+insert into sensor_data values
+(101, '2025-01-01 10:00:00', 23.50),
+(102, '2025-01-01 10:05:00', 24.10),
+(103, '2025-01-01 10:10:00', 22.75),
+(104, '2025-01-01 10:15:00', 25.00),
+(105, '2025-01-01 10:20:00', 20.00),
+(106, '2025-01-01 10:25:00', 21.60);
+
+select * from sensor_data where sensor_id='104';
+
+explain select * from sensor_data where sensor_id='101';  -- partition value = p1, bcz (101 % 2 = 1) --> odd values
+explain select * from sensor_data where sensor_id='102';  -- partition value = p0, bcz (102 % 2 = 0) --> even values
+
+-- NOTE: it scans the entire table of one partiton(p0 or p1) rather than scaning whole table
