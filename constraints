@@ -7,7 +7,7 @@ create table da_project(
      l_name varchar(20)
      );
 
-select* from da_project;
+select * from da_project;
 
 desc da_project;
 alter table da_project add email varchar(20);
