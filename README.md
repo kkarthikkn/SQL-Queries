@@ -1,0 +1,1 @@
+<h4><i>I made this repository to help me study SQL principles from a variety of internet sources in order to improve my understanding of this field and to write brief notes on the topics. I hope you find this useful.</h3>
