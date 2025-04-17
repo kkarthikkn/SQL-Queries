@@ -1,23 +1,23 @@
 # Window Functions
 
--- TYPES: 
-	  ----->Aggregate() ---> AVG()
-	  |				---> MAX()
+TYPES: 
+       ----->Aggregate() ---> AVG()
+       |		 ---> MAX()
        |                 ---> MIN()
        |                 ---> SUM()
-       |				---> COUNT()
+       |		 ---> COUNT()
        |                  
-	  ----->Ranking()   ---> ROW_NUMBER()
-	  |				---> RANK()
+       ----->Ranking()   ---> ROW_NUMBER()
+       |		 ---> RANK()
        |                 ---> DENSE_RANK()
        |                 ---> PERCENT_RANK()
-	  |				---> NTILE()
+       |		 ---> NTILE()
        |
        ----->Value()     ---> LAG()
-	  |				---> LEAD()
+       |		 ---> LEAD()
        |                 ---> FIRST_VALUE()
        |                 ---> LAST_VALUE()
-	  |				---> NTH_VALUE()
+       |		 ---> NTH_VALUE()
 ;
 
 
