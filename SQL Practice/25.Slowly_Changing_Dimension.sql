@@ -12,7 +12,7 @@
 
 # Main Types of SCD
 -- Type 1: Overwrite
--- Type 2: Keeps history by adding a new record
+-- Type 2: Keeps history by adding a new record by adding flag column (like Y/N)
 -- Type 3: Keeps history by adding a new attribute(column)
 
 
@@ -39,7 +39,7 @@ select * from type1;
 
 -- ***************************************************
 
-# Type 2 --> Adds new record & still holds the historical(old) record
+# Type 2 --> Adds new record & still holds the historical(old) record by updating the value in flag column
 drop table if exists type2;
 CREATE TABLE type2 (
     seller_key INT PRIMARY KEY,        
@@ -76,7 +76,7 @@ select * from type2 where seller_id = 501;
 
 -- ***************************************************
 
-# Type 3: Adding new attribute with updated values(column)
+# Type 3: Adding new attribute with updated values(column) with old column ie holding historical data 
 CREATE TABLE type3 (
     product_id INT PRIMARY KEY,         
     product_title VARCHAR(255),
